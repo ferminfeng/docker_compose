@@ -1,0 +1,461 @@
+services:
+
+  # 预留100个端口给nginx 14000-14099
+  full_nginx:
+    container_name: full_nginx
+    image: openresty/openresty:1.15.8.2-7-centos
+    ports:
+      # 消费券
+      - 14001:1401 # funny-server
+      - 14002:1402 # dyd-funny-game
+
+      # 有趣生活+永倍达
+      - 14003:1403 # funny-server
+      - 14004:1404 # ybd-shop
+      - 14005:1405 # ybd-shop-admin
+      - 14006:1406 # dyd-funny-game
+
+      # animalCrossing
+      - 14007:1407
+      - 14099:14099 # xhprof
+    volumes:
+      - ./etc/nginx/conf.d/ext:/etc/nginx/conf.d/ext
+      - ./etc/nginx/conf.d/vhost:/usr/local/openresty/nginx/conf/vhost
+      - ./etc/nginx/conf.d/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./log/nginx:/var/log/nginx
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_nginx
+
+
+  # 预留10个端口给php 14100-14109
+  full_php56:
+    container_name: full_php56
+    image: ferminfu/php56:v0.1
+    ports:
+      - 14100:9000
+    volumes:
+      - ./etc/php56/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      - ./etc/php56/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/php56/conf.d:/usr/local/etc/php/conf.d
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_php56
+
+  full_php73:
+    container_name: full_php73
+    #   build: ./etc/php73/
+    image: ferminfu/php73:v0.4
+#    ports:
+#      - 14101:9000
+    volumes:
+    #     - ./etc/php73/php-fpm.conf:/usr/local/etc/php-fpm.conf
+    #     - ./log/php73:/var/log/php-fpm
+    #     - ./etc/php73/conf.d:/usr/local/etc/php/conf.d
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_php73
+
+
+  full_php74:
+    container_name: full_php74
+    # build: ./etc/php74/
+    # image: php:7.4-fpm
+#    image: ferminfu/php74:v1.1
+    image: ferminfu/php74_new:v0.1
+#    ports:
+#      - 14102:9000
+#      - 14103:12000 # supervisor GUI
+    volumes:
+#      - ./etc/php74/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+#      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
+#      - ./etc/php74/php/conf.d:/usr/local/etc/php/conf.d
+#      - ./etc/php74/supervisor:/etc/supervisor
+#      - ./log/php74:/var/log/php-fpm
+#      - ./log/supervisor:/var/log/supervisor
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_php74
+
+
+  # 预留10个端口给 postgres 14120-14129
+  # 将root创建为超级用户，login是指允许登录
+  # CREATE ROLE root superuser PASSWORD '123456' login;
+  full_postgres:
+    container_name: full_postgres
+    image: postgres
+    ports:
+      # - 14120:5432
+      - 5432:5432
+#    volumes:
+#      - ./data/postgresql/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 123456
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_postgres
+
+
+  # 预留10个端口给 mysql 14130-14139
+  full_mysql57:
+    container_name: full_mysql57
+    image: mysql:5.7
+    ports:
+      - 14130:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mysql57:/var/lib/mysql
+      - ./log/mysql57:/var/log/mysql
+      - ./etc/mysql57/my.cnf:/etc/my.cnf
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_mysql57
+
+
+  # 预留10个端口给 rabbitmq 14140-14149
+  full_rabbitmq:
+    container_name: full_rabbitmq
+#    image: heidiks/rabbitmq-delayed-message-exchange:3.9.11-management
+#    image: rabbitmq:management
+    # apple m1
+    image: rabbitmq:3.8.14-management
+    ports:
+      - 14140:15672
+      - 14141:5672
+      - 14142:25672
+      - 14143:61613
+      - 14144:1883
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      # volumes:
+      # - ./etc/rabbitmq:/etc/rabbitmq
+      # - ./data/rabbitmq:/var/lib/rabbitmq
+      # - ./log/rabbitmq:/var/log/rabbitmq/log
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_rabbitmq
+
+
+  # 预留10个端口给 mongo 14150-14159
+  full_mongo:
+    container_name: full_mongo
+    #    image: mongo
+    image: mongo:4.4
+    ports:
+      - 14150:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    # command: --serviceExecutor adaptive
+    volumes:
+      - ./data/mongo:/etc/mongo
+    # config:
+    #   - /etc/mongo/mongod.conf
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_mongo
+
+
+    # full_mongo_express:
+    #   container_name: full_mongo_express
+    #   image: mongo-express
+    #   ports:
+    #     - 14151:8081
+    #   environment:
+    #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+    #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
+    #     ME_CONFIG_MONGODB_URL: mongodb://root:example@full_mongo:27017/
+    #   restart: always
+    #   platform: linux/x86_64
+    #   networks:
+    #     full:
+    #       aliases:
+    #         - full_mongo_express
+
+
+    # 预留10个端口给redis 14160-14169
+    # full_php_redis_admin:
+    #   container_name: full_php_redis_admin
+    #   image: erikdubbelboer/phpredisadmin:latest
+    #   ports:
+    #     - 14160:80
+    #   environment:
+    #     REDIS_1_HOST: full_redis40
+    #     REDIS_1_NAME: full_redis40
+    #     REDIS_1_PORT: 6379
+    #     REDIS_1_AUTH: 123456
+
+    #     REDIS_2_HOST: full_redis50
+    #     REDIS_2_NAME: full_redis50
+    #     REDIS_2_PORT: 6379
+    #     REDIS_2_AUTH: 123456
+    #   restart: always
+    #   platform: linux/x86_64
+    #   networks:
+    #     full:
+    #       aliases:
+    #         - full_php_redis_admin
+
+
+  full_redis40:
+    container_name: full_redis40
+    image: redis:4.0
+    ports:
+      - 14161:6379
+    volumes:
+      - ./etc/redis40:/etc/redis
+      - ./log/redis40:/var/log/redis
+      - ./data/redis40:/data
+    command: redis-server /etc/redis/redis.conf --appendonly yes
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_redis40
+
+
+    # full_redis50:
+    #   container_name: full_redis50
+    #   image: redis:5.0
+    #   ports:
+    #     - 14162:6379
+    #   volumes:
+    #     - ./etc/redis50:/etc/redis
+    #     - ./log/redis50:/var/log/redis
+    #     - ./data/redis50:/data
+    #   command: redis-server /etc/redis/redis.conf --appendonly yes
+    #   restart: always
+    #   platform: linux/x86_64
+    #   networks:
+    #     full:
+    #       aliases:
+    #         - full_redis50
+
+    # 预留10个端口给jenkins 14170-14179
+    # full_jenkins:
+    #   container_name: kyk_jenkins
+    #   image: jenkins/jenkins:lts
+    #   ports:
+    #     - 14170:8080
+    #     - 14171:5000
+    #   restart: always
+    #   platform: linux/x86_64
+    #   networks:
+    #     full:
+    #       aliases:
+    #         - full_jenkins
+
+
+    # 预留10个端口给sqlserver 14180-14189
+    # full_sqlserver:
+    #   container_name: full_sqlserver
+    #   image: mcr.microsoft.com/mssql/server:2019-latest
+    #   ports:
+    #     - 1433:1433
+    #   volumes:
+    #     - ./data/sqlserver:/var/opt
+    #   environment:
+    #     - ACCEPT_EULA=Y
+    #     - SA_PASSWORD=Apple@123
+    #   restart: always
+    #   platform: linux/x86_64
+    #   networks:
+    #     full:
+    #       aliases:
+    #         - full_sqlserver
+
+
+  # 预留10个端口给 nats 14190-14199
+  full_nats:
+    container_name: full_nats
+    image: nats:latest
+    ports:
+      - 4222:4222
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_nats
+
+  # sh /home/rocketmq/time.sh
+  # rocketmq
+  full_rmqnamesrv:
+    image: rocketmqinc/rocketmq
+    container_name: full_rmqnamesrv
+    restart: always
+    ports:
+      - 9876:9876
+    volumes:
+      - ./log/rocketmq:/home/rocketmq/logs
+      - ./data/rocketmq:/home/rocketmq/store
+      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+    command: sh mqnamesrv
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_rmqnamesrv
+
+  # 将 ./etc/rocketmq 下的 broker.conf.template 复制一份 改为broker.conf
+  full_rmqbroker:
+    image: rocketmqinc/rocketmq
+    container_name: full_rmqbroker
+    restart: always
+    ports:
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    volumes:
+      - ./log/rocketmq:/home/rocketmq/logs
+      - ./data/rocketmq:/home/rocketmq/store
+      - ./etc/rocketmq/broker.conf:/opt/rocketmq-4.4.0/conf/broker.conf
+      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+    command: sh mqbroker -n full_rmqnamesrv:9876 -c ../conf/broker.conf
+    depends_on:
+      - full_rmqnamesrv
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_rmqbroker
+
+  full_rocketmq_console:
+    image: styletang/rocketmq-console-ng
+    container_name: full_rocketmq_console
+    restart: always
+    ports:
+      - 9090:8080
+    volumes:
+      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+    depends_on:
+      - full_rmqnamesrv
+    environment:
+      - JAVA_OPTS= -Dlogging.level.root=info -Drocketmq.namesrv.addr=full_rmqnamesrv:9876
+      - Dcom.rocketmq.sendMessageWithVIPChannel=false
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_rocketmq_console
+
+
+  full_zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    container_name: full_zookeeper
+    volumes:
+      - /etc/localtime:/etc/localtime
+    environment:
+      TZ: Asia/Shanghai
+      ALLOW_ANONYMOUS_LOGIN: yes
+    restart: always
+    platform: linux/amd64
+    networks:
+      full:
+        aliases:
+          - full_zookeeper
+
+  full_kafka:
+    image: wurstmeister/kafka
+#    image: bitnami/kafka:latest
+    container_name: full_kafka
+    ports:
+      - 9092:9092
+      - 9093:9093
+    environment:
+      TZ: Asia/Shanghai
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_LISTENERS: CLIENT://:9092,EXTERNAL://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: CLIENT://full_kafka:9092,EXTERNAL://127.0.0.1:9093 # 外网访问时，需要修改为外网主机的IP地址
+      KAFKA_CFG_ZOOKEEPER_CONNECT: full_zookeeper:2181
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: CLIENT
+      ALLOW_PLAINTEXT_LISTENER: yes
+    depends_on:
+      - full_zookeeper
+    restart: always
+    platform: linux/amd64
+    networks:
+      full:
+        aliases:
+          - full_kafka
+
+
+  full_etcd:
+    container_name: full_etcd
+#    image: appcelerator/etcd
+    image: ferminfu/appcelerator_etcd_3.3.3
+    ports:
+      - 22379:2379
+      - 22380:2380
+    environment:
+      # ALLOW_NONE_AUTHENTICATION: yes
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+    restart: always
+    platform: linux/amd64
+    networks:
+      full:
+        aliases:
+          - full_etcd
+
+  full_kafka_manage:
+    image: dushixiang/kafka-map:latest
+    ports:
+      - 18080:8080
+    container_name: full_kafka_manage
+    volumes:
+      - ./data/kafkaManage:/usr/local/kafka-map/data
+    environment:
+      DEFAULT_USERNAME: admin
+      DEFAULT_PASSWORD: admin
+    restart: always
+    platform: linux/amd64
+    networks:
+      full:
+        aliases:
+          - full_kafka_manage
+
+
+networks:
+  full:
+    name: full
+    driver: bridge
