@@ -1,0 +1,303 @@
+services:
+
+  full_mysql57:
+    container_name: full_mysql57
+    image: mysql:5.7
+    ports:
+      - 14130:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mysql57:/var/lib/mysql
+      - ./log/mysql57:/var/log/mysql
+      - ./etc/mysql57/my.cnf:/etc/my.cnf
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_mysql57
+
+  full_mysql8:
+    container_name: full_mysql8
+    image: mysql:8.0
+    ports:
+      - 14131:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+#      TZ: Asia/Shanghai
+    command:
+      - "--default-authentication-plugin=caching_sha2_password"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_general_ci"
+      - "--lower_case_table_names=1"
+    volumes:
+      - ./data/mysql8:/var/lib/mysql
+      - ./log/mysql8:/var/log/mysql
+      - ./etc/mysql8:/etc/mysql/conf.d
+    restart: always
+    privileged: true
+    networks:
+      full:
+        aliases:
+          - full_mysql8
+
+
+  full_redis:
+    container_name: full_redis
+    image: redis:7.2
+    ports:
+      - 14161:6379
+    volumes:
+      - ./etc/redis:/etc/redis
+      - ./data/redis:/data
+    command: redis-server /etc/redis/redis.conf
+    restart: always
+    platform: linux/x86_64
+    networks:
+      full:
+        aliases:
+          - full_redis
+
+# docker run -d --name nats-server -p 4222:4222 -p 8222:8222 nats:latest -js -p 4222 -m 8222 -a 0.0.0.0
+  full_nats:
+    container_name: full_nats
+    image: nats:latest
+    ports:
+      - "4222:4222"   # 普通客户端（Node.js、Go 等）
+      - "8222:8222"   # HTTP 监控 http://localhost:8222
+      - "18080:8080"   # WebSocket 端口
+    volumes:
+      - ./etc/nats/nats-server.conf:/etc/nats/nats-server.conf
+    command: "-js -c /etc/nats/nats-server.conf"
+    restart: unless-stopped
+    networks:
+      full:
+        aliases:
+          - full_nats
+
+  full_etcd:
+    container_name: full_etcd
+#    image: appcelerator/etcd
+    image: ferminfu/appcelerator_etcd_3.3.3
+    ports:
+      - 22379:2379
+      - 22380:2380
+    environment:
+      # ALLOW_NONE_AUTHENTICATION: yes
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+    restart: always
+    platform: linux/amd64
+    networks:
+      full:
+        aliases:
+          - full_etcd
+
+  full_clickhouse:
+    container_name: full_clickhouse
+    image: clickhouse/clickhouse-server:head-alpine
+    ports:
+      - 8123:8123
+    restart: always
+    networks:
+      full:
+        aliases:
+          - full_clickhouse
+
+#  full_redis_node_1:
+#    image: redis:7.2
+#    container_name: full_redis_node_1
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7001:7001"
+#      - "17001:17001"
+#    volumes:
+#      - ./etc/redis-cluster/redis7001.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node1:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_1
+#
+#  full_redis_node_2:
+#    image: redis:7.2
+#    container_name: full_redis_node_2
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7002:7002"
+#      - "17002:17002"
+#    volumes:
+#      - ./etc/redis-cluster/redis7002.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node2:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_2
+#
+#  full_redis_node_3:
+#    image: redis:7.2
+#    container_name: full_redis_node_3
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7003:7003"
+#      - "17003:17003"
+#    volumes:
+#      - ./etc/redis-cluster/redis7003.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node3:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_3
+#
+#  full_redis_node_4:
+#    image: redis:7.2
+#    container_name: full_redis_node_4
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7004:7004"
+#      - "17004:17004"
+#    volumes:
+#      - ./etc/redis-cluster/redis7004.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node4:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_4
+#
+#  full_redis_node_5:
+#    image: redis:7.2
+#    container_name: full_redis_node_5
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7005:7005"
+#      - "17005:17005"
+#    volumes:
+#      - ./etc/redis-cluster/redis7005.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node5:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_5
+#
+#  full_redis_node_6:
+#    image: redis:7.2
+#    container_name: full_redis_node_6
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    ports:
+#      - "7006:7006"
+#      - "17006:17006"
+#    volumes:
+#      - ./etc/redis-cluster/redis7006.conf:/usr/local/etc/redis/redis.conf
+#      - ./data/redis-cluster/node6:/data
+#    networks:
+#      full:
+#        aliases:
+#          - full_redis_node_6
+
+  full_redis_6479:
+    image: redis:7.2
+    container_name: full_redis_6479
+    command: >
+      redis-server --port 6379
+      --bind 0.0.0.0
+      --protected-mode no
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6479
+      --cluster-announce-bus-port 16479
+      --dir /data
+      --appendonly yes
+    ports:
+      - "6479:6379"
+      - "16479:16379"
+    volumes:
+      - ./data/redis-cluster/node_6479:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - full_redis_6479
+
+
+  full_redis_6480:
+    image: redis:7.2
+    container_name: full_redis_6480
+    command: >
+      redis-server --port 6379
+      --bind 0.0.0.0
+      --protected-mode no
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6480
+      --cluster-announce-bus-port 16480
+      --dir /data
+      --appendonly yes
+    ports:
+      - "6480:6379"
+      - "16480:16379"
+    volumes:
+      - ./data/redis-cluster/node_6480:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - full_redis_6480
+
+  full_redis_6481:
+    image: redis:7.2
+    container_name: full_redis_6481
+    command: >
+      redis-server --port 6379
+      --bind 0.0.0.0
+      --protected-mode no
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6481
+      --cluster-announce-bus-port 16481
+      --dir /data
+      --appendonly yes
+    ports:
+      - "6481:6379"
+      - "16481:16379"
+    volumes:
+      - ./data/redis-cluster/node_6481:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - full_redis_6481
+
+  full_scylla_single:
+    image: scylladb/scylla:latest
+    container_name: full_scylla_single
+    ports:
+      - "9042:9042"
+      - "9000:9000"
+    volumes:
+      - ./data/scylladb:/var/lib/scylla
+      - ./etc/scylladb:/etc/scylla
+    environment:
+      SCYLLA_LISTEN_ADDRESS: 0.0.0.0
+      SCYLLA_RPC_ADDRESS: 0.0.0.0
+    command: >
+      --smp 2
+      --memory 4G
+      --overprovisioned 1
+      --developer-mode 1
+    networks:
+      full:
+        aliases:
+          - full_scylla_single
+
+
+networks:
+  full:
+    name: full
+    driver: bridge
