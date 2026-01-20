@@ -25,7 +25,6 @@ services:
       - 14131:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
-#      TZ: Asia/Shanghai
     command:
       - "--default-authentication-plugin=caching_sha2_password"
       - "--character-set-server=utf8mb4"
@@ -78,7 +77,6 @@ services:
 
   full_etcd:
     container_name: full_etcd
-#    image: appcelerator/etcd
     image: ferminfu/appcelerator_etcd_3.3.3
     ports:
       - 22379:2379
@@ -96,9 +94,18 @@ services:
 
   full_clickhouse:
     container_name: full_clickhouse
-    image: clickhouse/clickhouse-server:head-alpine
+#    image: clickhouse/clickhouse-server:head-alpine
+    image: yandex/clickhouse-server
     ports:
-      - 8123:8123
+      - "8123:8123"
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: 123456
+      CLICKHOUSE_DB: tsdd
+    volumes:
+      - ./data/clickhouse:/var/lib/clickhouse
+    # 没有用上
+#      - ./etc/clickhouse:/etc/clickhouse-server
     restart: always
     networks:
       full:
