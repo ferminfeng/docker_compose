@@ -104,8 +104,6 @@ services:
       CLICKHOUSE_DB: tsdd
     volumes:
       - ./data/clickhouse:/var/lib/clickhouse
-    # 没有用上
-#      - ./etc/clickhouse:/etc/clickhouse-server
     restart: always
     networks:
       full:
