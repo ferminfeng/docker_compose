@@ -205,7 +205,7 @@ services:
       --cluster-enabled yes
       --cluster-config-file nodes.conf
       --cluster-node-timeout 5000
-      --cluster-announce-ip host.docker.internal
+      --cluster-announce-ip 192.168.0.36
       --cluster-announce-port 6479
       --cluster-announce-bus-port 16479
       --dir /data
@@ -232,7 +232,7 @@ services:
       --cluster-enabled yes
       --cluster-config-file nodes.conf
       --cluster-node-timeout 5000
-      --cluster-announce-ip host.docker.internal
+      --cluster-announce-ip 192.168.0.36
       --cluster-announce-port 6480
       --cluster-announce-bus-port 16480
       --dir /data
@@ -258,7 +258,7 @@ services:
       --cluster-enabled yes
       --cluster-config-file nodes.conf
       --cluster-node-timeout 5000
-      --cluster-announce-ip host.docker.internal
+      --cluster-announce-ip 192.168.0.36
       --cluster-announce-port 6481
       --cluster-announce-bus-port 16481
       --dir /data
