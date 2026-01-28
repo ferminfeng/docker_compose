@@ -1,7 +1,7 @@
 services:
 
-  full_mysql8:
-    container_name: full_mysql8
+  yh_mysql8:
+    container_name: yh_mysql8
     image: mysql:8.0
     ports:
       - 14131:3306
@@ -21,11 +21,10 @@ services:
     networks:
       full:
         aliases:
-          - full_mysql8
+          - yh_mysql8
 
-
-  full_redis:
-    container_name: full_redis
+  yh_redis:
+    container_name: yh_redis
     image: redis:7.2
     ports:
       - 14161:6379
@@ -34,15 +33,61 @@ services:
       - ./data/redis:/data
     command: redis-server /etc/redis/redis.conf
     restart: always
-    platform: linux/x86_64
     networks:
       full:
         aliases:
-          - full_redis
+          - yh_redis
 
-# docker run -d --name nats-server -p 4222:4222 -p 8222:8222 nats:latest -js -p 4222 -m 8222 -a 0.0.0.0
-  full_nats:
-    container_name: full_nats
+  yh_redis_6479:
+    image: redis:7.2
+    container_name: yh_redis_6479
+    command: redis-server /etc/redis/redis-6479.conf
+    ports:
+      - "6479:6379"
+      - "16479:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-6479:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - yh_redis_6479
+
+  yh_redis_6480:
+    image: redis:7.2
+    container_name: yh_redis_6480
+    command: redis-server /etc/redis/redis-6480.conf
+    ports:
+      - "6480:6379"
+      - "16480:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-6480:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - yh_redis_6480
+
+  yh_redis_6481:
+    image: redis:7.2
+    container_name: yh_redis_6481
+    command: redis-server /etc/redis/redis-6481.conf
+    ports:
+      - "6481:6379"
+      - "16481:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-6481:/data
+    restart: always
+    networks:
+      full:
+        aliases:
+          - yh_redis_6481
+
+  yh_nats:
+    container_name: yh_nats
     image: nats:latest
     ports:
       - "4222:4222"   # 普通客户端（Node.js、Go 等）
@@ -55,16 +100,15 @@ services:
     networks:
       full:
         aliases:
-          - full_nats
+          - yh_nats
 
-  full_etcd:
-    container_name: full_etcd
+  yh_etcd:
+    container_name: yh_etcd
     image: ferminfu/appcelerator_etcd_3.3.3
     ports:
       - 22379:2379
       - 22380:2380
     environment:
-      # ALLOW_NONE_AUTHENTICATION: yes
       ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
       ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
     restart: always
@@ -72,11 +116,11 @@ services:
     networks:
       full:
         aliases:
-          - full_etcd
+          - yh_etcd
 
-  full_clickhouse:
-    container_name: full_clickhouse
-#    image: clickhouse/clickhouse-server:head-alpine
+  yh_clickhouse:
+    container_name: yh_clickhouse
+    #    image: clickhouse/clickhouse-server:head-alpine
     image: yandex/clickhouse-server
     ports:
       - "8123:8123"
@@ -90,90 +134,11 @@ services:
     networks:
       full:
         aliases:
-          - full_clickhouse
+          - yh_clickhouse
 
-  full_redis_6479:
-    image: redis:7.2
-    container_name: full_redis_6479
-    command: >
-      redis-server --port 6379
-      --bind 0.0.0.0
-      --protected-mode no
-      --cluster-enabled yes
-      --cluster-config-file nodes.conf
-      --cluster-node-timeout 5000
-      --cluster-announce-ip 192.168.0.240
-      --cluster-announce-port 6479
-      --cluster-announce-bus-port 16479
-      --dir /data
-      --appendonly yes
-    ports:
-      - "6479:6379"
-      - "16479:16379"
-    volumes:
-      - ./data/redis-cluster/node_6479:/data
-    restart: always
-    networks:
-      full:
-        aliases:
-          - full_redis_6479
-
-
-  full_redis_6480:
-    image: redis:7.2
-    container_name: full_redis_6480
-    command: >
-      redis-server --port 6379
-      --bind 0.0.0.0
-      --protected-mode no
-      --cluster-enabled yes
-      --cluster-config-file nodes.conf
-      --cluster-node-timeout 5000
-      --cluster-announce-ip 192.168.0.240
-      --cluster-announce-port 6480
-      --cluster-announce-bus-port 16480
-      --dir /data
-      --appendonly yes
-    ports:
-      - "6480:6379"
-      - "16480:16379"
-    volumes:
-      - ./data/redis-cluster/node_6480:/data
-    restart: always
-    networks:
-      full:
-        aliases:
-          - full_redis_6480
-
-  full_redis_6481:
-    image: redis:7.2
-    container_name: full_redis_6481
-    command: >
-      redis-server --port 6379
-      --bind 0.0.0.0
-      --protected-mode no
-      --cluster-enabled yes
-      --cluster-config-file nodes.conf
-      --cluster-node-timeout 5000
-      --cluster-announce-ip 192.168.0.240
-      --cluster-announce-port 6481
-      --cluster-announce-bus-port 16481
-      --dir /data
-      --appendonly yes
-    ports:
-      - "6481:6379"
-      - "16481:16379"
-    volumes:
-      - ./data/redis-cluster/node_6481:/data
-    restart: always
-    networks:
-      full:
-        aliases:
-          - full_redis_6481
-
-  full_scylla_single:
+  yh_scylla_single:
     image: scylladb/scylla:latest
-    container_name: full_scylla_single
+    container_name: yh_scylla_single
     ports:
       - "9042:9042"
       - "9000:9000"
@@ -191,7 +156,7 @@ services:
     networks:
       full:
         aliases:
-          - full_scylla_single
+          - yh_scylla_single
 
 
 networks:
