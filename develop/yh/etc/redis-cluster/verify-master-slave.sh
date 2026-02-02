@@ -5,13 +5,13 @@ echo "验证主从复制关系..."
 echo "======================"
 
 # 获取所有主节点
-masters=$(redis-cli -c -p 7001 cluster nodes | grep "master" | grep -v "fail" | awk '{print $1, $2}')
+masters=$(redis-cli -c -p 6479 cluster nodes | grep "master" | grep -v "fail" | awk '{print $1, $2}')
 
 while read -r master_id master_addr; do
     echo "主节点: $master_addr ($master_id)"
 
     # 查找该主节点的从节点
-    slaves=$(redis-cli -c -p 7001 cluster nodes | grep "slave" | grep "$master_id")
+    slaves=$(redis-cli -c -p 6479 cluster nodes | grep "slave" | grep "$master_id")
 
     if [ -n "$slaves" ]; then
         echo "  从节点:"
@@ -26,7 +26,7 @@ done <<< "$masters"
 
 echo "测试主从同步..."
 # 在主节点写入数据
-redis-cli -c -p 7001 set replication_test "master_value"
+redis-cli -c -p 6479 set replication_test "master_value"
 
 # 检查从节点是否同步
 for port in 7004 7005 7006; do

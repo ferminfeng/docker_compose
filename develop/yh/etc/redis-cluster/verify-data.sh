@@ -7,7 +7,7 @@ echo "======================"
 for i in {1..100}; do
     key="key_${i}"
     value="value_${i}"
-    redis-cli -c -p 7001 set $key $value > /dev/null
+    redis-cli -c -p 6479 set $key $value > /dev/null
     echo "设置 $key = $value"
 done
 
@@ -16,18 +16,18 @@ echo "======================"
 echo "检查数据分布："
 
 # 检查各节点的键数量
-for port in 7001 7002 7003; do
+for port in 6479 6480 6481; do
     count=$(redis-cli -c -p $port dbsize)
     echo "节点 $port: $count 个键"
 done
 
 echo ""
 echo "查看具体数据分布："
-redis-cli -c -p 7001 --scan --pattern "key_*" | while read key; do
-    location=$(redis-cli -c -p 7001 cluster keyslot $key)
+redis-cli -c -p 6479 --scan --pattern "key_*" | while read key; do
+    location=$(redis-cli -c -p 6479 cluster keyslot $key)
     echo "键: $key -> 槽位: $location"
 done | head -20
 
 echo ""
 echo "检查槽位分配...(应该显示所有16384个槽位都已分配)"
-redis-cli --cluster check 127.0.0.1:7001 | grep -A5 "slots"
+redis-cli --cluster check 127.0.0.1:6479 | grep -A5 "slots"
