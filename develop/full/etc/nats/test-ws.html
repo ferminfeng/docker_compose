@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>NATS WebSocket 测试页面</title>
+  <script src="https://unpkg.com/nats.ws@1.0.0/lib/nats.ws.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #output { margin-top: 20px; padding: 10px; border: 1px solid #ccc; height: 400px; overflow-y: scroll; }
+    button { margin: 5px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>NATS WebSocket 实时测试</h1>
+  <button onclick="connect()">连接 ws://localhost:18080</button>
+  <button onclick="subscribe()">订阅</button>
+  <button onclick="publish()">发布一条消息</button>
+  <button onclick="disconnect()">断开连接</button>
+
+  <div id="output"></div>
+
+  <script>
+    let nc = null;
+    const log = (msg) => {
+      const div = document.createElement('div');
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      document.getElementById('output').appendChild(div);
+      div.scrollIntoView();
+    };
+
+    async function connect() {
+      try {
+        nc = await Nats.connect({ servers: "ws://localhost:18080" });
+        log("✅ WebSocket 已连接！版本: " + nc.info.version);
+      } catch (e) {
+        log("❌ 连接失败: " + e.message);
+      }
+    }
+
+    function subscribe() {
+      if (!nc) return log("请先连接");
+      const sub = nc.subscribe("test");
+      (async () => {
+        for await (const m of sub) {
+          log("📨 收到: " + new TextDecoder().decode(m.data));
+        }
+      })();
+      log("已订阅test");
+    }
+
+    function publish() {
+      if (!nc) return log("请先连接");
+      nc.publish("test", "Hello from 浏览器 @ " + new Date().toLocaleString());
+      log("已发布一条消息");
+    }
+
+    async function disconnect() {
+      if (nc) await nc.drain();
+      log("已断开");
+      nc = null;
+    }
+  </script>
+</body>
+</html>
