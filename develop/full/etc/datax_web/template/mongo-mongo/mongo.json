@@ -1,0 +1,53 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "mongodbreader",
+          "parameter": {
+            "address": [
+              "zz_mes_mongo:27017"
+            ],
+            "dbName": "zhuzhou_mes",
+            "collectionName": "test_from",
+            "userName": "mes",
+            "userPassword": "123456",
+            "column": [
+              { "name": "_id", "type": "string" },
+              { "name": "name", "type": "string" }
+            ],
+            "splitPk": ""
+          }
+        },
+        "writer":  {
+          "name": "mongodbwriter",
+          "parameter": {
+            "address": [
+              "zz_mes_mongo:27017"
+            ],
+            "userName": "mes",
+            "userPassword": "123456",
+            "dbName": "zhuzhou_mes",
+            "collectionName": "test_to",
+            "column": [
+              { "name": "_id", "type": "string" },
+              { "name": "name", "type": "string" }
+            ],
+            "upsertInfo": {
+              "isReplace": true,
+              "replaceKey": "_id"
+            }
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": 1
+      }
+    }
+  }
+}
+
+
+

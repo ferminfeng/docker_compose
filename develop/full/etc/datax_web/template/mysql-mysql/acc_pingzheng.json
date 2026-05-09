@@ -1,0 +1,51 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "channel": 1
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "username": "root",
+            "password": "root",
+            "splitPk": "id",
+            "connection": [
+              {
+                "jdbcUrl": [
+                  "jdbc:mysql://zz_mes_mysql8:3306/zhu_zhou_mes?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8"
+                ],
+                "querySql": [
+                  "select * from acc_pingzheng where update_at >= date_sub(curdate(),interval 1 day)"
+
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "mysqlwriter",
+          "parameter": {
+            "writeMode": "update",
+            "username": "root",
+            "password": "root",
+            "connection": [
+              {
+                "jdbcUrl": "jdbc:mysql://zz_mes_mysql8:3306/sync_zz_mes?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8",
+                "table": [
+                  "acc_pingzheng"
+                ]
+              }
+            ],
+            "column": [
+              "*"
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

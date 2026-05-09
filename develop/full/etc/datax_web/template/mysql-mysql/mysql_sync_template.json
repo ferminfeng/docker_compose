@@ -1,0 +1,52 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "channel": 1
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "username": "root",
+            "password": "root",
+            "splitPk": "id",
+            "connection": [
+              {
+                "jdbcUrl": [
+                  "jdbc:mysql://zz_mes_mysql8:3306/test_sync?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull"
+                ],
+                "querySql": [
+                  "select id,from_content,add_time from test_from"
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "mysqlwriter",
+          "parameter": {
+            "writeMode": "update",
+            "username": "root",
+            "password": "root",
+            "connection": [
+              {
+                "jdbcUrl": "jdbc:mysql://zz_mes_mysql8:3306/test_sync?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull",
+                "table": [
+                  "test_to"
+                ]
+              }
+            ],
+            "column": [
+              "id",
+              "to_content",
+              "add_time"
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+use zhuzhou_mes
+
+
+db.createUser({
+  user: "mes",
+  pwd: "123456",
+  roles: [
+    { role: "readWrite", db: "zhuzhou_mes" }
+  ]
+})
