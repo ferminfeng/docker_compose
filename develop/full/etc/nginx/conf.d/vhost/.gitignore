@@ -1,2 +1,3 @@
-*.conf
-*.conf.bak
+# 忽略所有目录下的 .DS_Store
+.DS_Store
+**/.DS_Store

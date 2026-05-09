@@ -1,0 +1,499 @@
+name: full
+services:
+
+  # 预留100个端口给nginx 14000-14099
+  full_nginx:
+    container_name: full_nginx
+    image: openresty/openresty:1.15.8.2-7-centos
+    ports:
+      # 消费券
+      - "14001:1401" # funny-server
+      - "14002:1402" # dyd-funny-game
+
+      # 有趣生活+永倍达
+      - "14003:1403" # funny-server
+      - "14004:1404" # ybd-shop
+      - "14005:1405" # ybd-shop-admin
+      - "14006:1406" # dyd-funny-game
+
+      # animalCrossing
+      - "14007:1407"
+
+      # erp
+      - "14008:1407"
+      # zz mes
+      - "14009:1407"
+
+      # xhprof
+      - "14099:14099"
+
+    volumes:
+      - ./etc/nginx/conf.d/ext:/etc/nginx/conf.d/ext
+      - ./etc/nginx/conf.d/vhost:/usr/local/openresty/nginx/conf/vhost
+      - ./etc/nginx/conf.d/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./log/nginx:/var/log/nginx
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  # 预留10个端口给php 14100-14109
+  full_php56:
+    container_name: full_php56
+    image: ferminfu/php56:v0.1
+    ports:
+      - 14100:9000
+    volumes:
+      - ./etc/php56/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      - ./etc/php56/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/php56/conf.d:/usr/local/etc/php/conf.d
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  full_php73:
+    container_name: full_php73
+    #   build: ./etc/php73/
+    image: ferminfu/php73:v0.4
+    #    ports:
+    #      - 14101:9000
+    volumes:
+      #     - ./etc/php73/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      #     - ./log/php73:/var/log/php-fpm
+      #     - ./etc/php73/conf.d:/usr/local/etc/php/conf.d
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  full_php74:
+    container_name: full_php74
+    # build: ./etc/php74/
+    # image: php:7.4-fpm
+    #    image: ferminfu/php74:v1.0
+    image: ferminfu/php74_new:v0.1
+    ports:
+      - 14102:9000
+    #      - 14103:12000 # supervisor GUI
+    volumes:
+      #      - ./etc/php74/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      #      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/cacert.pem:/usr/local/etc/php/cacert.pem
+      #      - ./etc/php74/php/conf.d:/usr/local/etc/php/conf.d
+      #      - ./etc/php74/supervisor:/etc/supervisor
+      #      - ./log/php74:/var/log/php-fpm
+      #      - ./log/supervisor:/var/log/supervisor
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  # 预留10个端口给 postgres 14120-14129
+  # 将root创建为超级用户，login是指允许登录
+  # CREATE ROLE root superuser PASSWORD '123456' login;
+  full_postgres:
+    container_name: full_postgres
+    image: postgres
+    ports:
+      # - 14120:5432
+      - 5432:5432
+#    volumes:
+#      - ./data/postgresql/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 123456
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  # 预留10个端口给 mysql 14130-14139
+  full_mysql57:
+    container_name: full_mysql57
+    image: mysql:5.7
+    ports:
+      - 14130:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mysql57:/var/lib/mysql
+      - ./log/mysql57:/var/log/mysql
+      - ./etc/mysql57/my.cnf:/etc/my.cnf
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  full_mysql8:
+    container_name: full_mysql8
+    image: mysql:8.0
+    ports:
+      - 14131:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
+      TZ: Asia/Shanghai
+    command:
+      - "--default-authentication-plugin=caching_sha2_password"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_general_ci"
+      - "--lower_case_table_names=1"
+      - "--skip-name-resolve"
+      - "--innodb_buffer_pool_size=256M"
+    volumes:
+      - ./data/mysql8:/var/lib/mysql
+      - ./etc/mysql8:/etc/mysql/conf.d
+      - ./log/mysql8:/var/log/mysql
+    restart: always
+    privileged: true
+    networks:
+      - full_net
+
+  # 预留10个端口给 rabbitmq 14140-14149
+  full_rabbitmq:
+    container_name: full_rabbitmq
+    #    image: heidiks/rabbitmq-delayed-message-exchange:3.9.11-management
+    #    image: rabbitmq:management
+    # apple m1
+    image: rabbitmq:3.8.14-management
+    ports:
+      - 14140:15672
+      - 14141:5672
+      - 14142:25672
+      - 14143:61613
+      - 14144:1883
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      # volumes:
+      # - ./etc/rabbitmq:/etc/rabbitmq
+      # - ./data/rabbitmq:/var/lib/rabbitmq
+      # - ./log/rabbitmq:/var/log/rabbitmq/log
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  # 预留10个端口给 mongo 14150-14159
+  full_mongo:
+    container_name: full_mongo
+    #    image: mongo
+    image: mongo:4.4
+    ports:
+      - 14150:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./data/mongo:/etc/mongo
+    # config:
+    #   - /etc/mongo/mongod.conf
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
+
+  # 预留10个端口给 redis 14160-14169
+  full_redis72:
+    container_name: full_redis72
+    image: redis:7.2
+    ports:
+      - 14160:6379
+    volumes:
+      - ./etc/redis72:/etc/redis
+      - ./data/redis72:/data
+    command: redis-server /etc/redis/redis.conf
+    restart: always
+    networks:
+      - full_net
+
+#  full_redis_6479:
+#    image: redis:7.2
+#    container_name: full_redis_6479
+#    command: redis-server /etc/redis/redis-6479.conf
+#    ports:
+  # 要改端口号，
+#      - "6479:6379"
+#      - "16479:16379"
+#    volumes:
+#      - ./etc/redis-cluster:/etc/redis
+#      - ./data/redis-cluster/node-6479:/data
+#    restart: always
+#    networks:
+#      - full_net
+#
+#  full_redis_6480:
+#    image: redis:7.2
+#    container_name: full_redis_6480
+#    command: redis-server /etc/redis/redis-6480.conf
+#    ports:
+  # 要改端口号，
+#      - "6480:6379"
+#      - "16480:16379"
+#    volumes:
+#      - ./etc/redis-cluster:/etc/redis
+#      - ./data/redis-cluster/node-6480:/data
+#    restart: always
+#    networks:
+#      - full_net
+#
+#  full_redis_6481:
+#    image: redis:7.2
+#    container_name: full_redis_6481
+#    command: redis-server /etc/redis/redis-6481.conf
+#    ports:
+# 要改端口号，
+#      - "6481:6379"
+#      - "16481:16379"
+#    volumes:
+#      - ./etc/redis-cluster:/etc/redis
+#      - ./data/redis-cluster/node-6481:/data
+#    restart: always
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 nats 14170-14179
+#  full_nats:
+#    container_name: full_nats
+#    image: nats:latest
+#    ports:
+# 要改端口号，
+#      - "4222:4222"   # 普通客户端（Node.js、Go 等）
+#      - "8222:8222"   # HTTP 监控 http://localhost:8222
+#      - "18081:8080"   # WebSocket 端口
+#    volumes:
+#      - ./etc/nats/nats-server.conf:/etc/nats/nats-server.conf
+#    command: "-js -c /etc/nats/nats-server.conf"
+#    restart: unless-stopped
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 rocketmq 14180-14189
+  # sh /home/rocketmq/time.sh
+  # rocketmq
+#  full_rmqnamesrv:
+#    image: rocketmqinc/rocketmq
+#    container_name: full_rmqnamesrv
+#    restart: always
+#    ports:
+  #      # 要改端口号，
+#      - 9876:9876
+#    volumes:
+#      - ./log/rocketmq:/home/rocketmq/logs
+#      - ./data/rocketmq:/home/rocketmq/store
+#      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+#    command: sh mqnamesrv
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+  # 将 ./etc/rocketmq 下的 broker.conf.template 复制一份 改为broker.conf
+#  full_rmqbroker:
+#    image: rocketmqinc/rocketmq
+#    container_name: full_rmqbroker
+#    restart: always
+#    ports:
+# 要改端口号，
+#      - 10909:10909
+#      - 10911:10911
+#      - 10912:10912
+#    volumes:
+#      - ./log/rocketmq:/home/rocketmq/logs
+#      - ./data/rocketmq:/home/rocketmq/store
+#      - ./etc/rocketmq/broker.conf:/opt/rocketmq-4.4.0/conf/broker.conf
+#      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+#    command: sh mqbroker -n full_rmqnamesrv:9876 -c ../conf/broker.conf
+#    depends_on:
+#      - full_rmqnamesrv
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+#  full_rocketmq_console:
+#    image: styletang/rocketmq-console-ng
+#    container_name: full_rocketmq_console
+#    restart: always
+#    ports:
+# 要改端口号，
+#      - 9090:8080
+#    volumes:
+#      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
+#    depends_on:
+#      - full_rmqnamesrv
+#    environment:
+#      - JAVA_OPTS= -Dlogging.level.root=info -Drocketmq.namesrv.addr=full_rmqnamesrv:9876
+#      - Dcom.rocketmq.sendMessageWithVIPChannel=false
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 zookeeper 14190-14199
+#  full_zookeeper:
+#    image: wurstmeister/zookeeper
+#    ports:
+# 要改端口号，
+#      - 2181:2181
+#    container_name: full_zookeeper
+#    volumes:
+#      - /etc/localtime:/etc/localtime
+#    environment:
+#      TZ: Asia/Shanghai
+#      ALLOW_ANONYMOUS_LOGIN: yes
+#    restart: always
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 etcd 14200-14209
+  #  full_etcd:
+  #    image: ferminfu/appcelerator_etcd_3.3.3
+  #    ports:
+  # 要改端口号，
+  #      - 22379:2379
+  #      - 22380:2380
+  #    container_name: full_etcd
+  #    environment:
+  #      # ALLOW_NONE_AUTHENTICATION: yes
+  #      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+  #      ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+  #    restart: always
+  #    platform: linux/amd64
+  #    networks:
+  #      - full_net
+
+  # 预留10个端口给 kafka 14210-14219
+#  full_kafka:
+#    image: apache/kafka:4.1.1
+#    container_name: full_kafka
+#    ports:
+  # 要改端口号，
+#      - "9092:9092"
+#      - "9093:9093"
+#    environment:
+#      KAFKA_NODE_ID: 1
+#      KAFKA_PROCESS_ROLES: broker,controller
+#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+#      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+#      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+#    restart: always
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+#  full_kafka_manage:
+#    image: dushixiang/kafka-map:latest
+#    ports:
+# 要改端口号，
+#      - 18080:8080
+#    container_name: full_kafka_manage
+#    volumes:
+#      - ./data/kafkaManage:/usr/local/kafka-map/data
+#    environment:
+#      DEFAULT_USERNAME: admin
+#      DEFAULT_PASSWORD: admin
+#    restart: always
+#    platform: linux/amd64
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 clickhouse 14220-14229
+#  full_clickhouse:
+#    container_name: full_clickhouse
+#    #    image: clickhouse/clickhouse-server:head-alpine
+#    image: yandex/clickhouse-server
+#    ports:
+# 要改端口号，
+#      - "8123:8123"
+#    environment:
+#      CLICKHOUSE_USER: default
+#      CLICKHOUSE_PASSWORD: 123456
+#      CLICKHOUSE_DB: tsdd
+#    volumes:
+#      - ./data/clickhouse:/var/lib/clickhouse
+#    restart: always
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 scylladb 14230-14239
+#  full_scylla_single:
+#    image: scylladb/scylla:latest
+#    container_name: full_scylla_single
+#    ports:
+# 要改端口号，
+#      - "9042:9042"
+#      - "9000:9000"
+#    volumes:
+#      - ./data/scylladb:/var/lib/scylla
+#      - ./etc/scylladb:/etc/scylla
+#    environment:
+#      SCYLLA_LISTEN_ADDRESS: 0.0.0.0
+#      SCYLLA_RPC_ADDRESS: 0.0.0.0
+#    command: >
+#      --smp 2
+#      --memory 4G
+#      --overprovisioned 1
+#      --developer-mode 1
+#    networks:
+#      - full_net
+
+  # 预留10个端口给 mqtt 14240-14249
+  #  1883: MQTT 协议的默认端口，用于 MQTT 客户端与 EMQ X 服务进行通信。
+  #  8883: MQTT 协议的安全端口，使用 SSL/TLS 加密通信。
+  #  8083: WebSocket over MQTT 协议的端口，用于支持通过 WebSocket 进行 MQTT 通信。
+  #  8084: WebSocket over MQTT 协议的安全端口，使用 SSL/TLS 加密通信。
+  #  8081: HTTP API 的端口，用于管理和监控 EMQ X 服务。
+  #  18083: WebSocket over HTTP 协议的管理界面端口，用于通过 Web 界面管理和监控 EMQ X 服务 默认账号密码 admin:public，如忘记密码，可按照登陆页面忘记密码流程重置密码
+
+  #  https://blog:csdn:net/qq_43917690/article/details/136705488
+  full_mqtt:
+      container_name: full_mqtt
+      image: emqx/emqx:5.3.2
+      ports:
+        - "14240:1883"
+        - "14241:8883"
+        - "14242:8083"
+        - "14243:8084"
+        - "14244:8081"
+        - "14245:18083"
+      restart: always
+      privileged: true
+      networks:
+        - full_net
+
+  # 预留10个端口给 mqtt 14250-14259
+  # 请看安装文档
+  # 默认账号密码 admin/123456
+  # datax_web安装文档 https://www.cnblogs.com/adblogs/p/18605350
+  # mysql读取插件 使用文档 https://github.com/alibaba/DataX/blob/master/mysqlreader/doc/mysqlreader.md
+  # mysql写入插件 使用文档 https://github.com/alibaba/DataX/blob/master/mysqlwriter/doc/mysqlwriter.md
+  full_datax_web:
+    container_name: full_datax_web
+    image: docker.io/linshellfeng/datax_web:3.0.1
+    ports:
+      - "14250:9527"
+    volumes:
+      - ./etc/datax_web/bootstrap.properties:/home/datax/datax-web-2.1.2/modules/datax-admin/conf/bootstrap.properties
+    restart: always
+    privileged: true
+    networks:
+      - full_net
+
+
+networks:
+  full_net:
+    driver: bridge
+    name: full_net
+
