@@ -4,7 +4,7 @@ echo "========== Redis集群验证开始 =========="
 echo ""
 
 # 检查所有节点
-PORTS=(6479 6480 6481)
+PORTS=(14161 14163 14165)
 
 for port in "${PORTS[@]}"; do
     echo "检查节点 127.0.0.1:$port"
@@ -34,4 +34,4 @@ for port in "${PORTS[@]}"; do
 done
 
 echo "========== 集群完整性检查 =========="
-redis-cli --cluster check 127.0.0.1:6479 --cluster-search-multiple-owners
+redis-cli --cluster check 127.0.0.1:14161 --cluster-search-multiple-owners
