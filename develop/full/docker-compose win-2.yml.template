@@ -27,6 +27,8 @@ services:
       # xhprof
       - "14099:14099"
 
+    environment:
+      TZ: Asia/Shanghai
     volumes:
       - ./etc/nginx/conf.d/ext:/etc/nginx/conf.d/ext
       - ./etc/nginx/conf.d/vhost:/usr/local/openresty/nginx/conf/vhost
@@ -124,6 +126,7 @@ services:
       - "14130:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
     volumes:
       - ./data/mysql57:/var/lib/mysql
       - ./log/mysql57:/var/log/mysql
@@ -178,6 +181,7 @@ services:
 #      # - ./etc/rabbitmq:/etc/rabbitmq
 #      # - ./data/rabbitmq:/var/lib/rabbitmq
 #      # - ./log/rabbitmq:/var/log/rabbitmq/log
+#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
@@ -193,6 +197,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      TZ: Asia/Shanghai
     volumes:
       - ./data/mongo:/etc/mongo
     # config:
@@ -208,6 +213,8 @@ services:
     image: redis:7.2
     ports:
       - "14160:6379"
+    environment:
+      TZ: Asia/Shanghai
     volumes:
       - ./etc/redis72:/etc/redis
       - ./data/redis72:/data
@@ -224,6 +231,8 @@ services:
 #    ports:
 #      - "14161:6379"
 #      - "14162:16379"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/redis-cluster:/etc/redis
 #      - ./data/redis-cluster/node-14161:/data
@@ -238,6 +247,8 @@ services:
 #    ports:
 #      - "14163:6379"
 #      - "14164:16379"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/redis-cluster:/etc/redis
 #      - ./data/redis-cluster/node-14163:/data
@@ -252,6 +263,8 @@ services:
 #    ports:
 #      - "14165:6379"
 #      - "14166:16379"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/redis-cluster:/etc/redis
 #      - ./data/redis-cluster/node-14165:/data
@@ -267,6 +280,8 @@ services:
 #      - "14170:4222"   # 普通客户端（Node.js、Go 等）
 #      - "14171:8222"   # HTTP 监控 http://localhost:8222
 #      - "14172:8080"   # WebSocket 端口
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/nats/nats-server.conf:/etc/nats/nats-server.conf
 #    command: "-js -c /etc/nats/nats-server.conf"
@@ -278,11 +293,13 @@ services:
   # sh /home/rocketmq/time.sh
   # rocketmq
 #  full_rmqnamesrv:
-#    image: rocketmqinc/rocketmq
 #    container_name: full_rmqnamesrv
+#    image: rocketmqinc/rocketmq
 #    restart: always
 #    ports:
 #      - "14180:9876"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./log/rocketmq:/home/rocketmq/logs
 #      - ./data/rocketmq:/home/rocketmq/store
@@ -294,14 +311,16 @@ services:
 
   # 将 ./etc/rocketmq 下的 broker.conf.template、broker-a.properties.template 复制一份到当前目录，并去除[.template]
 #  full_rmqbroker:
-#    image: rocketmqinc/rocketmq
 #    container_name: full_rmqbroker
+#    image: rocketmqinc/rocketmq
 #    restart: always
 #    ports:
 #      - "14181:10909"
 #      - "14182:10911"
 #      - "10911:10911"
 #      - "14183:10912"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./log/rocketmq:/home/rocketmq/logs
 #      - ./data/rocketmq:/home/rocketmq/store
@@ -315,11 +334,13 @@ services:
 #      - full_net
 
 #  full_rocketmq_console:
-#    image: styletang/rocketmq-console-ng
 #    container_name: full_rocketmq_console
+#    image: styletang/rocketmq-console-ng
 #    restart: always
 #    ports:
 #      - 14184:8080
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/rocketmq/time.sh:/home/rocketmq/time.sh
 #    depends_on:
@@ -333,10 +354,12 @@ services:
 
   # 预留10个端口给 zookeeper 14190-14199
 #  full_zookeeper:
+#    container_name: full_zookeeper
 #    image: wurstmeister/zookeeper
 #    ports:
 #      - "14190:2181"
-#    container_name: full_zookeeper
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - /etc/localtime:/etc/localtime
 #    environment:
@@ -349,11 +372,13 @@ services:
 
   # 预留10个端口给 etcd 14200-14209
 #  full_etcd:
+#    container_name: full_etcd
 #    image: ferminfu/appcelerator_etcd_3.3.3
 #    ports:
 #      - "14200:2379"
 #      - "14201:2380"
-#    container_name: full_etcd
+#    environment:
+#      TZ: Asia/Shanghai
 #    environment:
 #      # ALLOW_NONE_AUTHENTICATION: yes
 #      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
@@ -365,8 +390,8 @@ services:
 
   # 预留10个端口给 kafka 14210-14219
 #  full_kafka:
-#    image: apache/kafka:4.1.1
 #    container_name: full_kafka
+#    image: apache/kafka:4.1.1
 #    ports:
 #      - "14210:9092"
 #      - "14211:9093"
@@ -379,21 +404,23 @@ services:
 #      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
 #      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:14211
 #      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
 #      - full_net
 
 #  full_kafka_manage:
+#    container_name: full_kafka_manage
 #    image: dushixiang/kafka-map:latest
 #    ports:
 #      - 14212:8080
-#    container_name: full_kafka_manage
 #    volumes:
 #      - ./data/kafkaManage:/usr/local/kafka-map/data
 #    environment:
 #      DEFAULT_USERNAME: admin
 #      DEFAULT_PASSWORD: admin
+#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
@@ -410,6 +437,7 @@ services:
 #      CLICKHOUSE_USER: default
 #      CLICKHOUSE_PASSWORD: 123456
 #      CLICKHOUSE_DB: tsdd
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./data/clickhouse:/var/lib/clickhouse
 #    restart: always
@@ -418,11 +446,13 @@ services:
 
   # 预留10个端口给 scylladb 14230-14239
 #  full_scylla_single:
-#    image: scylladb/scylla:latest
 #    container_name: full_scylla_single
+#    image: scylladb/scylla:latest
 #    ports:
 #      - "14230:9042"
 #      - "14231:9000"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./data/scylladb:/var/lib/scylla
 #      - ./etc/scylladb:/etc/scylla
@@ -457,6 +487,8 @@ services:
       - "14243:8084"
       - "14244:8081"
       - "14245:18083"
+    environment:
+      TZ: Asia/Shanghai
     restart: always
     privileged: true
     networks:
@@ -473,6 +505,8 @@ services:
     image: docker.io/linshellfeng/datax_web:3.0.1
     ports:
       - "14250:9527"
+    environment:
+      TZ: Asia/Shanghai
     volumes:
       - ./etc/datax_web/bootstrap.properties:/home/datax/datax-web-2.1.2/modules/datax-admin/conf/bootstrap.properties
     restart: always
