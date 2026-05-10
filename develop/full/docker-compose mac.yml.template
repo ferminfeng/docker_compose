@@ -216,66 +216,62 @@ services:
     networks:
       - full_net
 
-#  full_redis_6479:
-#    image: redis:7.2
-#    container_name: full_redis_6479
-#    command: redis-server /etc/redis/redis-6479.conf
-#    ports:
-  # 要改端口号，
-#      - "6479:6379"
-#      - "16479:16379"
-#    volumes:
-#      - ./etc/redis-cluster:/etc/redis
-#      - ./data/redis-cluster/node-6479:/data
-#    restart: always
-#    networks:
-#      - full_net
-#
-#  full_redis_6480:
-#    image: redis:7.2
-#    container_name: full_redis_6480
-#    command: redis-server /etc/redis/redis-6480.conf
-#    ports:
-  # 要改端口号，
-#      - "6480:6379"
-#      - "16480:16379"
-#    volumes:
-#      - ./etc/redis-cluster:/etc/redis
-#      - ./data/redis-cluster/node-6480:/data
-#    restart: always
-#    networks:
-#      - full_net
-#
-#  full_redis_6481:
-#    image: redis:7.2
-#    container_name: full_redis_6481
-#    command: redis-server /etc/redis/redis-6481.conf
-#    ports:
-# 要改端口号，
-#      - "6481:6379"
-#      - "16481:16379"
-#    volumes:
-#      - ./etc/redis-cluster:/etc/redis
-#      - ./data/redis-cluster/node-6481:/data
-#    restart: always
-#    networks:
-#      - full_net
+  full_redis_14161:
+    image: redis:7.2
+    container_name: full_redis_14161
+    command: redis-server /etc/redis/redis-14161.conf
+    ports:
+      - "14161:6379"
+      - "14162:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-14161:/data
+    restart: always
+    networks:
+      - full_net
+
+  full_redis_14163:
+    image: redis:7.2
+    container_name: full_redis_14163
+    command: redis-server /etc/redis/redis-14163.conf
+    ports:
+      - "14163:6379"
+      - "14164:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-14163:/data
+    restart: always
+    networks:
+      - full_net
+
+  full_redis_14165:
+    image: redis:7.2
+    container_name: full_redis_14165
+    command: redis-server /etc/redis/redis-14165.conf
+    ports:
+      - "14165:6379"
+      - "14166:16379"
+    volumes:
+      - ./etc/redis-cluster:/etc/redis
+      - ./data/redis-cluster/node-14165:/data
+    restart: always
+    networks:
+      - full_net
 
   # 预留10个端口给 nats 14170-14179
-#  full_nats:
-#    container_name: full_nats
-#    image: nats:latest
-#    ports:
-# 要改端口号，
-#      - "4222:4222"   # 普通客户端（Node.js、Go 等）
-#      - "8222:8222"   # HTTP 监控 http://localhost:8222
-#      - "18081:8080"   # WebSocket 端口
-#    volumes:
-#      - ./etc/nats/nats-server.conf:/etc/nats/nats-server.conf
-#    command: "-js -c /etc/nats/nats-server.conf"
-#    restart: unless-stopped
-#    networks:
-#      - full_net
+  full_nats:
+    container_name: full_nats
+    image: nats:latest
+    ports:
+      - "14170:4222"   # 普通客户端（Node.js、Go 等）
+      - "14171:8222"   # HTTP 监控 http://localhost:8222
+      - "14172:8080"   # WebSocket 端口
+    volumes:
+      - ./etc/nats/nats-server.conf:/etc/nats/nats-server.conf
+    command: "-js -c /etc/nats/nats-server.conf"
+    restart: unless-stopped
+    networks:
+      - full_net
 
   # 预留10个端口给 rocketmq 14180-14189
   # sh /home/rocketmq/time.sh
