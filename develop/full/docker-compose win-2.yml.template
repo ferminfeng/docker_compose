@@ -32,7 +32,7 @@ services:
       - ./etc/nginx/conf.d/vhost:/usr/local/openresty/nginx/conf/vhost
       - ./etc/nginx/conf.d/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./log/nginx:/var/log/nginx
-      - /var/www:/var/www
+      - D:/www:/var/www
     privileged: true
     restart: always
     platform: linux/amd64
