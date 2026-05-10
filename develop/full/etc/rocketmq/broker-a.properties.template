@@ -11,5 +11,5 @@ autoCreateSubscriptionGroup=true
 ## if msg tracing is open,the flag will be true aaa
 traceTopicEnable=true
 listenPort=10911
-brokerIP1=192.168.40.87
-namesrvAddr=192.168.40.87:9876
+brokerIP1=192.168.6.79
+namesrvAddr=192.168.6.79:14180
