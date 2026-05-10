@@ -14,7 +14,7 @@
             "userPassword": "123456",
             "column": [
               { "name": "_id", "type": "string" },
-              { "name": "name", "type": "string" }
+              { "name": "test_content", "type": "string" }
             ],
             "splitPk": ""
           }
@@ -31,10 +31,10 @@
             "collectionName": "test_to",
             "column": [
               { "name": "_id", "type": "string" },
-              { "name": "name", "type": "string" }
+              { "name": "test_content", "type": "string" }
             ],
-            "upsertInfo": {
-              "isReplace": true,
+            "writeMode": {
+              "isReplace": "true",
               "replaceKey": "_id"
             }
           }
