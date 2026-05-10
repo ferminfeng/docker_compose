@@ -10,7 +10,7 @@ server {
     {
         return 403;
     }
-    
+
     location / {
         try_files $uri $uri/ /index.php$is_args$args;
         if (!-e $request_filename) {
@@ -31,7 +31,7 @@ server {
 
 server {
     listen 82;
-   
+
     server_name     _;
     root         /var/www/kyk/ybd/ybd-shop/public;
     index        index.php;
@@ -49,5 +49,41 @@ server {
         fastcgi_index  index.php;
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include        fastcgi_params;
+    }
+}
+
+server {
+    listen       1408;
+    server_name  localhost;
+    charset utf-8;
+
+    root   /var/www/reshu/reshuXT2025/erp_web/dist;
+    index  w.html index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    error_page  404              /404.html;
+    error_page  500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /var/www/reshu/reshuXT2025/erp_web/dist;
+    }
+
+    # 禁止访问隐藏文件
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
+
+
+
+server {
+    listen 8083;
+
+    location /admin/ {
+        proxy_pass http://full_mqtt:18083/;
     }
 }
