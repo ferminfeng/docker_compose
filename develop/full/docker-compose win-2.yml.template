@@ -216,6 +216,7 @@ services:
     networks:
       - full_net
 
+  # redis集群配置
   full_redis_14161:
     image: redis:7.2
     container_name: full_redis_14161
