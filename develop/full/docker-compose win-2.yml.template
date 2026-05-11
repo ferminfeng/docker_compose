@@ -119,22 +119,22 @@ services:
 #      - full_net
 
   # 预留10个端口给 mysql 14130-14139
-  full_mysql57:
-    container_name: full_mysql57
-    image: mysql:5.7
-    ports:
-      - "14130:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      TZ: Asia/Shanghai
-    volumes:
-      - ./data/mysql57:/var/lib/mysql
-      - ./log/mysql57:/var/log/mysql
-      - ./etc/mysql57/my.cnf:/etc/my.cnf
-    restart: always
-    platform: linux/amd64
-    networks:
-      - full_net
+#  full_mysql57:
+#    container_name: full_mysql57
+#    image: mysql:5.7
+#    ports:
+#      - "14130:3306"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./data/mysql57:/var/lib/mysql
+#      - ./log/mysql57:/var/log/mysql
+#      - ./etc/mysql57/my.cnf:/etc/my.cnf
+#    restart: always
+#    platform: linux/amd64
+#    networks:
+#      - full_net
 
   full_mysql8:
     container_name: full_mysql8
