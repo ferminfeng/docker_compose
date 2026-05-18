@@ -26,7 +26,6 @@ services:
 
       # xhprof
       - "14099:14099"
-
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -47,6 +46,8 @@ services:
 #    image: ferminfu/php56:v0.1
 #    ports:
 #      - "14100:9000"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./etc/php56/php-fpm.conf:/usr/local/etc/php-fpm.conf
 #      - ./etc/php56/php.ini:/usr/local/etc/php/php.ini
@@ -64,6 +65,8 @@ services:
 #    image: ferminfu/php73:v0.4
 #    ports:
 #      - "14101:9000"
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      #     - ./etc/php73/php-fpm.conf:/usr/local/etc/php-fpm.conf
 #      #     - ./log/php73:/var/log/php-fpm
@@ -84,6 +87,8 @@ services:
 #    ports:
 #      - "14102:9000"
 #    #      - 14103:12000 # supervisor GUI
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      #      - ./etc/php74/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
 #      #      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
@@ -108,6 +113,8 @@ services:
 #    image: postgres
 #    ports:
 #       - "14120:5432"
+#    environment:
+#      TZ: Asia/Shanghai
 ##    volumes:
 ##      - ./data/postgresql/data:/var/lib/postgresql/data
 #    environment:
@@ -125,8 +132,8 @@ services:
     ports:
       - "14130:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./data/mysql57:/var/lib/mysql
       - ./log/mysql57:/var/log/mysql
@@ -175,13 +182,13 @@ services:
 #      - "14143:61613"
 #      - "14144:1883"
 #    environment:
+#      TZ: Asia/Shanghai
 #      RABBITMQ_DEFAULT_USER: admin
 #      RABBITMQ_DEFAULT_PASS: admin
 #      # volumes:
 #      # - ./etc/rabbitmq:/etc/rabbitmq
 #      # - ./data/rabbitmq:/var/lib/rabbitmq
 #      # - ./log/rabbitmq:/var/log/rabbitmq/log
-#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
@@ -195,9 +202,9 @@ services:
     ports:
       - "14150:27017"
     environment:
+      TZ: Asia/Shanghai
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      TZ: Asia/Shanghai
     volumes:
       - ./data/mongo:/etc/mongo
     # config:
@@ -293,8 +300,8 @@ services:
   # sh /home/rocketmq/time.sh
   # rocketmq
 #  full_rmqnamesrv:
-#    container_name: full_rmqnamesrv
 #    image: rocketmqinc/rocketmq
+#    container_name: full_rmqnamesrv
 #    restart: always
 #    ports:
 #      - "14180:9876"
@@ -311,8 +318,8 @@ services:
 
   # 将 ./etc/rocketmq 下的 broker.conf.template、broker-a.properties.template 复制一份到当前目录，并去除[.template]
 #  full_rmqbroker:
-#    container_name: full_rmqbroker
 #    image: rocketmqinc/rocketmq
+#    container_name: full_rmqbroker
 #    restart: always
 #    ports:
 #      - "14181:10909"
@@ -334,11 +341,11 @@ services:
 #      - full_net
 
 #  full_rocketmq_console:
-#    container_name: full_rocketmq_console
 #    image: styletang/rocketmq-console-ng
+#    container_name: full_rocketmq_console
 #    restart: always
 #    ports:
-#      - 14184:8080
+#      - "14184:8080"
 #    environment:
 #      TZ: Asia/Shanghai
 #    volumes:
@@ -354,12 +361,10 @@ services:
 
   # 预留10个端口给 zookeeper 14190-14199
 #  full_zookeeper:
-#    container_name: full_zookeeper
 #    image: wurstmeister/zookeeper
 #    ports:
 #      - "14190:2181"
-#    environment:
-#      TZ: Asia/Shanghai
+#    container_name: full_zookeeper
 #    volumes:
 #      - /etc/localtime:/etc/localtime
 #    environment:
@@ -372,14 +377,13 @@ services:
 
   # 预留10个端口给 etcd 14200-14209
 #  full_etcd:
-#    container_name: full_etcd
 #    image: ferminfu/appcelerator_etcd_3.3.3
 #    ports:
 #      - "14200:2379"
 #      - "14201:2380"
+#    container_name: full_etcd
 #    environment:
 #      TZ: Asia/Shanghai
-#    environment:
 #      # ALLOW_NONE_AUTHENTICATION: yes
 #      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
 #      ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
@@ -390,12 +394,13 @@ services:
 
   # 预留10个端口给 kafka 14210-14219
 #  full_kafka:
-#    container_name: full_kafka
 #    image: apache/kafka:4.1.1
+#    container_name: full_kafka
 #    ports:
 #      - "14210:9092"
 #      - "14211:9093"
 #    environment:
+#      TZ: Asia/Shanghai
 #      KAFKA_NODE_ID: 1
 #      KAFKA_PROCESS_ROLES: broker,controller
 #      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -404,7 +409,6 @@ services:
 #      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
 #      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:14211
 #      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
-#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
@@ -415,12 +419,13 @@ services:
 #    image: dushixiang/kafka-map:latest
 #    ports:
 #      - 14212:8080
+#    environment:
+#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./data/kafkaManage:/usr/local/kafka-map/data
 #    environment:
 #      DEFAULT_USERNAME: admin
 #      DEFAULT_PASSWORD: admin
-#      TZ: Asia/Shanghai
 #    restart: always
 #    platform: linux/amd64
 #    networks:
@@ -434,10 +439,10 @@ services:
 #    ports:
 #      - "14220:8123"
 #    environment:
+#      TZ: Asia/Shanghai
 #      CLICKHOUSE_USER: default
 #      CLICKHOUSE_PASSWORD: 123456
 #      CLICKHOUSE_DB: tsdd
-#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./data/clickhouse:/var/lib/clickhouse
 #    restart: always
@@ -446,17 +451,16 @@ services:
 
   # 预留10个端口给 scylladb 14230-14239
 #  full_scylla_single:
-#    container_name: full_scylla_single
 #    image: scylladb/scylla:latest
+#    container_name: full_scylla_single
 #    ports:
 #      - "14230:9042"
 #      - "14231:9000"
-#    environment:
-#      TZ: Asia/Shanghai
 #    volumes:
 #      - ./data/scylladb:/var/lib/scylla
 #      - ./etc/scylladb:/etc/scylla
 #    environment:
+#      TZ: Asia/Shanghai
 #      SCYLLA_LISTEN_ADDRESS: 0.0.0.0
 #      SCYLLA_RPC_ADDRESS: 0.0.0.0
 #    command: >
@@ -477,22 +481,22 @@ services:
 
   #  https://blog:csdn:net/qq_43917690/article/details/136705488
   full_mqtt:
-    container_name: full_mqtt
-    image: emqx/emqx:5.3.2
-    ports:
-      - "14240:1883"
-      - "14241:8883"
-      - "14242:8083"
-      - "8083:8083"
-      - "14243:8084"
-      - "14244:8081"
-      - "14245:18083"
-    environment:
-      TZ: Asia/Shanghai
-    restart: always
-    privileged: true
-    networks:
-      - full_net
+      container_name: full_mqtt
+      image: emqx/emqx:5.3.2
+      ports:
+        - "14240:1883"
+        - "14241:8883"
+        - "14242:8083"
+        - "8083:8083"
+        - "14243:8084"
+        - "14244:8081"
+        - "14245:18083"
+      environment:
+        TZ: Asia/Shanghai
+      restart: always
+      privileged: true
+      networks:
+        - full_net
 
   # 预留10个端口给 mqtt 14250-14259
   # 请看安装文档
