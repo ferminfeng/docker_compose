@@ -7,18 +7,26 @@ services:
     image: openresty/openresty:1.15.8.2-7-centos
     ports:
       # 消费券
-      - 14001:1401 # funny-server
-      - 14002:1402 # dyd-funny-game
+      - "14001:1401" # funny-server
+      - "14002:1402" # dyd-funny-game
 
       # 有趣生活+永倍达
-      - 14003:1403 # funny-server
-      - 14004:1404 # ybd-shop
-      - 14005:1405 # ybd-shop-admin
-      - 14006:1406 # dyd-funny-game
+      - "14003:1403" # funny-server
+      - "14004:1404" # ybd-shop
+      - "14005:1405" # ybd-shop-admin
+      - "14006:1406" # dyd-funny-game
+
+      # erp
+      - "14008:1408"
+      # zz mes
+      - "14009:1409"
 
       # animalCrossing
-      - 14007:1407
-      - 14099:14099 # xhprof
+      - "14090:1490"
+      - "14091:1491"
+
+      # xhprof
+      - "14099:14099"
     volumes:
       - ./etc/nginx/conf.d/ext:/etc/nginx/conf.d/ext
       - ./etc/nginx/conf.d/vhost:/usr/local/openresty/nginx/conf/vhost

@@ -16,13 +16,14 @@ services:
       - "14005:1405" # ybd-shop-admin
       - "14006:1406" # dyd-funny-game
 
-      # animalCrossing
-      - "14007:1407"
-
       # erp
       - "14008:1408"
       # zz mes
       - "14009:1409"
+
+      # animalCrossing
+      - "14090:1490"
+      - "14091:1491"
 
       # xhprof
       - "14099:14099"
@@ -77,33 +78,33 @@ services:
 #    platform: linux/amd64
 #    networks:
 #      - full_net
-#
-#  full_php74:
-#    container_name: full_php74
-#    # build: ./etc/php74/
-#    # image: php:7.4-fpm
-#    #    image: ferminfu/php74:v1.0
-#    image: ferminfu/php74_new:v0.1
-#    ports:
-#      - "14102:9000"
-#    #      - 14103:12000 # supervisor GUI
-#    environment:
-#      TZ: Asia/Shanghai
-#    volumes:
-#      #      - ./etc/php74/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
-#      #      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
-#      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
-#      - ./etc/cacert.pem:/usr/local/etc/php/cacert.pem
-#      #      - ./etc/php74/php/conf.d:/usr/local/etc/php/conf.d
-#      #      - ./etc/php74/supervisor:/etc/supervisor
-#      #      - ./log/php74:/var/log/php-fpm
-#      #      - ./log/supervisor:/var/log/supervisor
-#      - /var/www:/var/www
-#    privileged: true
-#    restart: always
-#    platform: linux/amd64
-#    networks:
-#      - full_net
+
+  full_php74:
+    container_name: full_php74
+    # build: ./etc/php74/
+    # image: php:7.4-fpm
+    #    image: ferminfu/php74:v1.0
+    image: ferminfu/php74_new:v0.1
+    ports:
+      - "14102:9000"
+    #      - 14103:12000 # supervisor GUI
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      #      - ./etc/php74/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      #      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/php74/php/php.ini:/usr/local/etc/php/php.ini
+      - ./etc/cacert.pem:/usr/local/etc/php/cacert.pem
+      #      - ./etc/php74/php/conf.d:/usr/local/etc/php/conf.d
+      #      - ./etc/php74/supervisor:/etc/supervisor
+      #      - ./log/php74:/var/log/php-fpm
+      #      - ./log/supervisor:/var/log/supervisor
+      - /var/www:/var/www
+    privileged: true
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
 
   # 预留10个端口给 postgres 14120-14129
   # 将root创建为超级用户，login是指允许登录

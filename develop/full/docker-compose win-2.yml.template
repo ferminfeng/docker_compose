@@ -16,17 +16,17 @@ services:
       - "14005:1405" # ybd-shop-admin
       - "14006:1406" # dyd-funny-game
 
-      # animalCrossing
-      - "14007:1407"
-
       # erp
       - "14008:1408"
       # zz mes
       - "14009:1409"
 
+      # animalCrossing
+      - "14090:1490"
+      - "14091:1491"
+
       # xhprof
       - "14099:14099"
-
     environment:
       TZ: Asia/Shanghai
     volumes:
