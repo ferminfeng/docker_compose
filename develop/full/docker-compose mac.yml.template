@@ -482,22 +482,23 @@ services:
 
   #  https://blog:csdn:net/qq_43917690/article/details/136705488
   full_mqtt:
-      container_name: full_mqtt
-      image: emqx/emqx:5.3.2
-      ports:
-        - "14240:1883"
-        - "14241:8883"
-        - "14242:8083"
-        - "8083:8083"
-        - "14243:8084"
-        - "14244:8081"
-        - "14245:18083"
-      environment:
-        TZ: Asia/Shanghai
-      restart: always
-      privileged: true
-      networks:
-        - full_net
+    container_name: full_mqtt
+    image: emqx/emqx:5.3.2
+    ports:
+      - "14240:1883"
+      - "1883:1883"
+      - "14241:8883"
+      - "14242:8083"
+      - "8083:8083"
+      - "14243:8084"
+      - "14244:8081"
+      - "14245:18083"
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    privileged: true
+    networks:
+      - full_net
 
   # 预留10个端口给 mqtt 14250-14259
   # 请看安装文档
