@@ -116,11 +116,10 @@ services:
 #       - "14120:5432"
 #    environment:
 #      TZ: Asia/Shanghai
-##    volumes:
-##      - ./data/postgresql/data:/var/lib/postgresql/data
-#    environment:
 #      POSTGRES_PASSWORD: 123456
 #      ALLOW_IP_RANGE: 0.0.0.0/0
+##    volumes:
+##      - ./data/postgresql/data:/var/lib/postgresql/data
 #    restart: always
 #    platform: linux/amd64
 #    networks:
