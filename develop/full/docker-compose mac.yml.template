@@ -106,24 +106,26 @@ services:
     networks:
       - full_net
 
+  # PostgreSQL 18.3 + pg_bigm 1.2，统一由本文件编排。
   # 预留10个端口给 postgres 14120-14129
-  # 将root创建为超级用户，login是指允许登录
-  # CREATE ROLE root superuser PASSWORD '123456' login;
-#  full_postgres:
-#    container_name: full_postgres
-#    image: postgres
-#    ports:
-#       - "14120:5432"
-#    environment:
-#      TZ: Asia/Shanghai
-#      POSTGRES_PASSWORD: 123456
-#      ALLOW_IP_RANGE: 0.0.0.0/0
-##    volumes:
-##      - ./data/postgresql/data:/var/lib/postgresql/data
-#    restart: always
-#    platform: linux/amd64
-#    networks:
-#      - full_net
+  full_postgres:
+    container_name: full_postgres
+    image: local/full-postgres:18.3-pgbigm
+    build:
+      context: ./etc/postgres-pgbigm
+    command: ["postgres", "-c", "shared_preload_libraries=pg_bigm"]
+    ports:
+       - "14120:5432"
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_PASSWORD: 123456
+      ALLOW_IP_RANGE: 0.0.0.0/0
+#    volumes:
+#      - ./data/postgresql/data:/var/lib/postgresql/data
+    restart: always
+    platform: linux/amd64
+    networks:
+      - full_net
 
   # 预留10个端口给 mysql 14130-14139
   full_mysql57:
