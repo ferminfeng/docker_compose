@@ -116,7 +116,8 @@ services:
   # 将root创建为超级用户，login是指允许登录
   # CREATE ROLE root superuser PASSWORD '123456' login;
   full_postgres:
-    container_name: full_postgres
+#    image: local/full-postgres:18.3-pgbigm
+    image: ferminfu/postgres-18.3-pgbigm:v0.1
     image: postgres
     ports:
       # - 14120:5432
