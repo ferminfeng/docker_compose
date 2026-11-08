@@ -20,6 +20,8 @@ services:
       - "14008:1408"
       # zz mes
       - "14009:1409"
+      # erp2027
+      - "14010:1410"
 
       # animalCrossing
       - "14090:1490"
@@ -106,20 +108,23 @@ services:
     networks:
       - full_net
 
+  # PostgreSQL 18.3 + pg_bigm 1.2，统一由本文件编排。
   # 预留10个端口给 postgres 14120-14129
   # 将root创建为超级用户，login是指允许登录
   # CREATE ROLE root superuser PASSWORD '123456' login;
   full_postgres:
     container_name: full_postgres
-    image: postgres
+#    image: local/full-postgres:18.3-pgbigm
+    image: ferminfu/postgres-18.3-pgbigm:v0.2
+    command: ["postgres", "-c", "shared_preload_libraries=pg_bigm"]
     ports:
        - "14120:5432"
     environment:
       TZ: Asia/Shanghai
       POSTGRES_PASSWORD: 123456
       ALLOW_IP_RANGE: 0.0.0.0/0
-#    volumes:
-#      - ./data/postgresql/data:/var/lib/postgresql/data
+    volumes:
+      - full_postgres_data:/var/lib/postgresql
     restart: always
     platform: linux/amd64
     networks:
@@ -519,6 +524,9 @@ services:
     networks:
       - full_net
 
+
+volumes:
+  full_postgres_data:
 
 networks:
   full_net:

@@ -31,3 +31,5 @@ COPY --from=build /extension-artifacts/ /tmp/extension-artifacts/
 RUN cp /tmp/extension-artifacts/lib/* "$(pg_config --pkglibdir)/" \
     && cp /tmp/extension-artifacts/share/* "$(pg_config --sharedir)/extension/" \
     && rm -rf /tmp/extension-artifacts
+
+RUN localedef -i zh_CN -f UTF-8 zh_CN.UTF-8

@@ -1,5 +1,7 @@
 # 所有结构、业务函数和数据均由 Navicat 从 A 库传到本地
 
+2026-11-08 的 Docker Hub `v0.2` 镜像及 `pg_dump`/`pg_restore` 全库导入流程见 [镜像与全库导入](../../docs/PostgreSQL-20261108-镜像与全库导入.md)。以下为 2026-10-27 的历史迁移记录。
+
 2026-10-27 已通过 macOS Navicat Premium 16.3.4 完成 A 库到本地 Docker 的实际迁移。
 目标为 `local-postgres` → `127.0.0.1:14120` → `erp2027.public`。
 所有业务结构、函数和数据均由 Navicat 直接读取实时 A 库传输；没有使用 `public.sql` 装载本地业务库。
